@@ -81,28 +81,6 @@ sub _disassemble_hangul_char {
     }
 }
 
-sub _move_cursor {
-    my ($self) = @_;
-
-    $self->_x($self->_x + $self->_dx);
-    $self->_y($self->_y + $self->_dy);
-
-    if ($self->_y < 0) {
-        $self->_y(scalar @{$self->_codespace} - 1);
-    }
-    if ($self->_y >= scalar @{$self->_codespace}) {
-        $self->_y(0);
-    }
-
-    if ($self->_x < 0) {
-        $self->_x(scalar @{$self->_codespace->[$self->_y]} - 1);
-    }
-    if ($self->_x >= scalar @{$self->_codespace->[$self->_y]} &&
-        $self->_dx != 0) {
-        $self->_x(0);
-    }
-}
-
 sub _push {
     my ($self, $i, $n) = @_;
 
@@ -141,6 +119,28 @@ sub _initialize {
 
     my $codespace = $self->_build_codespace($self->_source);
     $self->_codespace($codespace);
+}
+
+sub _move_cursor {
+    my ($self) = @_;
+
+    $self->_x($self->_x + $self->_dx);
+    $self->_y($self->_y + $self->_dy);
+
+    if ($self->_y < 0) {
+        $self->_y(scalar @{$self->_codespace} - 1);
+    }
+    if ($self->_y >= scalar @{$self->_codespace}) {
+        $self->_y(0);
+    }
+
+    if ($self->_x < 0) {
+        $self->_x(scalar @{$self->_codespace->[$self->_y]} - 1);
+    }
+    if ($self->_x >= scalar @{$self->_codespace->[$self->_y]} &&
+        $self->_dx != 0) {
+        $self->_x(0);
+    }
 }
 
 __PACKAGE__->meta->make_immutable;
