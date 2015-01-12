@@ -18,6 +18,12 @@ has '_codespace' => (
     init_arg => undef,
 );
 
+
+has '_x' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
+has '_y' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
+has '_dx' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
+has '_dy' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
+
 sub BUILD {
     my ($self, $args) = @_;
 
@@ -52,6 +58,28 @@ sub _disassemble_hangul_char {
     }
     else {
         return {'cho' => -1, 'jung' => -1, 'jong' => -1};
+    }
+}
+
+sub _move_cursor {
+    my ($self) = @_;
+
+    $self->_x($self->_x + $self->_dx);
+    $self->_y($self->_y + $self->_dy);
+
+    if ($self->_y < 0) {
+        $self->_y(scalar @{$self->_codespace} - 1);
+    }
+    if ($self->_y >= scalar @{$self->_codespace}) {
+        $self->_y(0);
+    }
+
+    if ($self->_x < 0) {
+        $self->_x(scalar @{$self->_codespace->[$self->_y]} - 1);
+    }
+    if ($self->_x >= scalar @{$self->_codespace->[$self->_y]} &&
+        $self->_dx != 0) {
+        $self->_x(0);
     }
 }
 
