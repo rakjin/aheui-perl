@@ -1,5 +1,7 @@
 package Acme::Aheui::Machine;
+use utf8;
 use Moose;
+use Data::Dumper;
 use namespace::autoclean;
 
 has '_source' => (
@@ -25,7 +27,17 @@ sub BUILD {
 sub _build_codespace {
     my ($self, $source) = @_;
 
-    return [[{}]];
+    my @lines = split /\r?\n/, $source;
+    my @rows = ();
+    for my $line (@lines) {
+        my @row = ();
+        for my $char (split //, $line) {
+            my %code = ('raw' => $char);
+            push @row, \%code;
+        }
+        push @rows, \@row;
+    }
+    return \@rows;
 }
 
 __PACKAGE__->meta->make_immutable;
