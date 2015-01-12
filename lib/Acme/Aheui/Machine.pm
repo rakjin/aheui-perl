@@ -19,10 +19,24 @@ has '_codespace' => (
 );
 
 has '_stacks' => (
-    is => 'ro',
+    is => 'rw',
     isa => 'ArrayRef[ArrayRef[Int]]',
     init_arg => undef,
     default => sub { [] },
+);
+
+has '_stack_index' => (
+    is => 'rw',
+    isa => 'Int',
+    init_arg => undef,
+    default => 0,
+);
+
+has '_is_stopped' => (
+    is => 'rw',
+    isa => 'Bool',
+    init_arg => undef,
+    default => 1,
 );
 
 
@@ -34,8 +48,7 @@ has '_dy' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
 sub BUILD {
     my ($self, $args) = @_;
 
-    my $codespace = $self->_build_codespace($self->_source);
-    $self->_codespace($codespace);
+    $self->_initialize();
 }
 
 sub _build_codespace {
@@ -113,6 +126,21 @@ sub _pop {
     else {
         return pop @{$self->_stacks->[$i]};
     }
+}
+
+sub _initialize {
+    my ($self) = @_;
+
+    $self->_is_stopped(1);
+    $self->_x(0);
+    $self->_y(0);
+    $self->_dx(0);
+    $self->_dy(0);
+    $self->_stack_index(0);
+    $self->_stacks([]);
+
+    my $codespace = $self->_build_codespace($self->_source);
+    $self->_codespace($codespace);
 }
 
 __PACKAGE__->meta->make_immutable;
