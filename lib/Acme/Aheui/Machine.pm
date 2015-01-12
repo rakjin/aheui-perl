@@ -2,6 +2,7 @@ package Acme::Aheui::Machine;
 use utf8;
 use Moose;
 use Data::Dumper;
+use POSIX;
 use namespace::autoclean;
 
 has '_source' => (
@@ -32,12 +33,26 @@ sub _build_codespace {
     for my $line (@lines) {
         my @row = ();
         for my $char (split //, $line) {
-            my %code = ('raw' => $char);
-            push @row, \%code;
+            my $disassembled = $self->_disassemble_hangul_char($char);
+            push @row, $disassembled;
         }
         push @rows, \@row;
     }
     return \@rows;
+}
+
+sub _disassemble_hangul_char {
+    my ($self, $char) = @_;
+
+    if ($char =~ /\p{Hangul}/) {
+        my $code = unpack 'U', $char;
+        $code -= 0xAC00;
+        my ($cho, $jung, $jong) = (floor($code/28/21), ($code/28)%21, $code%28);
+        return {'cho' => $cho, 'jung' => $jung, 'jong' => $jong};
+    }
+    else {
+        return {'cho' => -1, 'jung' => -1, 'jong' => -1};
+    }
 }
 
 __PACKAGE__->meta->make_immutable;
