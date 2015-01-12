@@ -18,6 +18,13 @@ has '_codespace' => (
     init_arg => undef,
 );
 
+has '_stacks' => (
+    is => 'ro',
+    isa => 'ArrayRef[ArrayRef[Int]]',
+    init_arg => undef,
+    default => sub { [] },
+);
+
 
 has '_x' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
 has '_y' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
@@ -80,6 +87,31 @@ sub _move_cursor {
     if ($self->_x >= scalar @{$self->_codespace->[$self->_y]} &&
         $self->_dx != 0) {
         $self->_x(0);
+    }
+}
+
+sub _push {
+    my ($self, $i, $n) = @_;
+
+    if ($i == 27) {
+        ; # ㅎ
+    }
+    else {
+        push @{$self->_stacks->[$i]}, $n;
+    }
+}
+
+sub _pop {
+    my ($self, $i) = @_;
+
+    if ($i == 21) { # ㅇ
+        return shift @{$self->_stacks->[$i]};
+    }
+    elsif ($i == 27) { # ㅎ
+        return;
+    }
+    else {
+        return pop @{$self->_stacks->[$i]};
     }
 }
 

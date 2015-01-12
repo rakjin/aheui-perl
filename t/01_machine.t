@@ -134,4 +134,54 @@ SOURCE_01
     is_deeply( [$machine->_x, $machine->_y], [2, 4] );
 }
 
+{ # storages
+
+    my $counter = 0;
+    sub test_stack {
+        my ($machine, $storage_index) = @_;
+
+        my $in = $counter++;
+        $machine->_push($storage_index, $in);
+        my $out = $machine->_pop($storage_index);
+        is ( $in, $out );
+
+        my ($in1, $in2, $in3) = ($counter++, $counter++, $counter++);
+        $machine->_push($storage_index, $in1);
+        $machine->_push($storage_index, $in2);
+        $machine->_push($storage_index, $in3);
+        my $out3 = $machine->_pop($storage_index);
+        my $out2 = $machine->_pop($storage_index);
+        my $out1 = $machine->_pop($storage_index);
+        is_deeply ( [$in1, $in2, $in3], [$out1, $out2, $out3] );
+    }
+
+    sub test_queue {
+        my ($machine, $storage_index) = @_;
+
+        my $in = $counter++;
+        $machine->_push($storage_index, $in);
+        my $out = $machine->_pop($storage_index);
+        is ( $in, $out );
+
+        my ($in1, $in2, $in3) = ($counter++, $counter++, $counter++);
+        $machine->_push($storage_index, $in1);
+        $machine->_push($storage_index, $in2);
+        $machine->_push($storage_index, $in3);
+        my $out1 = $machine->_pop($storage_index);
+        my $out2 = $machine->_pop($storage_index);
+        my $out3 = $machine->_pop($storage_index);
+        is_deeply ( [$in1, $in2, $in3], [$out1, $out2, $out3] );
+    }
+
+    my $machine = Acme::Aheui::Machine->new( source => '' );
+    for my $i (0..26) {
+        if ($i == 21) { # ㅇ queue
+            test_queue($machine, $i);
+        }
+        else { # '', ㄱ, ㄴ, ... ㅆ, ㅈ, .. ㅍ stack
+            test_stack($machine, $i);
+        }
+    }
+}
+
 done_testing();
