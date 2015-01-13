@@ -128,10 +128,10 @@ sub _disassemble_hangul_char {
         my $code = unpack 'U', $char;
         $code -= 0xAC00;
         my ($cho, $jung, $jong) = (int($code/28/21), ($code/28)%21, $code%28);
-        return {'cho' => $cho, 'jung' => $jung, 'jong' => $jong};
+        return {cho => $cho, jung => $jung, jong => $jong};
     }
     else {
-        return {'cho' => -1, 'jung' => -1, 'jong' => -1};
+        return {cho => -1, jung => -1, jong => -1};
     }
 }
 
