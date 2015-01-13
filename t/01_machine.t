@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::More;
 use Capture::Tiny ':all';
+use Encode qw/decode/;
 
 BEGIN {
 	use_ok( 'Acme::Aheui::Machine' );
@@ -255,4 +256,35 @@ __SOURCE__
     is( $stderr, '' );
 }
 
+{ # input number
+    my ($stdout, $stderr, @result) = capture {
+        my $stdin;
+        open($stdin,'<&STDIN');
+        *STDIN = *DATA;
+        my $machine = Acme::Aheui::Machine->new( source => '방빠망망히' );
+        $machine->execute();
+        *STDIN = $stdin;
+    };
+    is( $stdout, '369369' );
+    is( $stderr, '' );
+}
+
+{ # input characters
+    my ($stdout, $stderr, @result) = capture {
+        my $stdin;
+        open($stdin,'<&STDIN');
+        *STDIN = *DATA;
+        my $machine = Acme::Aheui::Machine->new( source => '밯밯맣맣히' );
+        $machine->execute();
+        *STDIN = $stdin;
+    };
+    is( decode('utf-8', $stdout), '몽즙' );
+    is( $stderr, '' );
+}
+
 done_testing();
+
+
+__DATA__
+369
+즙몽

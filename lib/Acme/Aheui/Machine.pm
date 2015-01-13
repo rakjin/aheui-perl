@@ -2,6 +2,8 @@ package Acme::Aheui::Machine;
 use utf8;
 use Moose;
 use Data::Dumper;
+use Term::ReadKey;
+use Encode qw/encode/;
 use namespace::autoclean;
 
 use constant {
@@ -259,11 +261,10 @@ sub _step {
             elsif ($cho == 6) { # ㅁ
                 my $a = $self->_pop($si);
                 if ($jong == 21) { # jongㅇ
-                    $self->_output($a);
+                    $self->_output_number($a);
                 }
                 elsif ($jong == 27) { # jongㅎ
-                    my $unichar = pack 'U', $a;
-                    $self->_output($unichar);
+                    $self->_output_code_as_character($a);
                 }
             }
             elsif ($cho == 7) { # ㅂ
@@ -272,7 +273,7 @@ sub _step {
                     $a = $self->_get_input_number();
                 }
                 elsif ($jong == 27) { # jongㅎ
-                    $a = unpack 'U', $self->_get_input_character();
+                    $a = $self->_get_input_character_as_code();
                 }
                 else { # the other jongs
                     $a = JONG_STROKE_NUMS->[$jong];
@@ -356,18 +357,30 @@ sub _get_deltas_upon_jung {
     }
 }
 
-sub _output {
-    my ($self, $str) = @_;
+sub _output_number {
+    my ($self, $number) = @_;
 
-    print $str;
+    print $number;
 }
 
-sub _get_input_character {
-    return 'a';
+sub _output_code_as_character {
+    my ($self, $code) = @_;
+
+    my $unichar = pack 'U', $code;
+    print encode('utf-8', $unichar);
+}
+
+sub _get_input_character_as_code {
+    my ($self) = @_;
+
+    my $char = ReadKey(0);
+    return unpack 'U', $char;
 }
 
 sub _get_input_number {
-    return 3;
+    my ($self) = @_;
+
+    return int(ReadLine(0));
 }
 
 __PACKAGE__->meta->make_immutable;
