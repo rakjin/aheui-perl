@@ -1,7 +1,6 @@
 package Acme::Aheui::Machine;
 use utf8;
 use Moose;
-use Data::Dumper;
 use Term::ReadKey;
 use Encode qw/encode/;
 use namespace::autoclean;
@@ -77,11 +76,19 @@ sub BUILD {
     $self->_initialize();
 }
 
-sub execute {
+sub _initialize {
     my ($self) = @_;
 
-    $self->_is_stopped(0);
-    $self->_step();
+    $self->_is_stopped(1);
+    $self->_x(0);
+    $self->_y(0);
+    $self->_dx(0);
+    $self->_dy(1);
+    $self->_stack_index(0);
+    $self->_stacks([]);
+
+    my $codespace = $self->_build_codespace($self->_source);
+    $self->_codespace($codespace);
 }
 
 sub _build_codespace {
@@ -114,102 +121,11 @@ sub _disassemble_hangul_char {
     }
 }
 
-sub _push {
-    my ($self, $i, $n) = @_;
-
-    if ($i == 27) { # ㅎ
-        return;
-    }
-    else {
-        push @{$self->_stacks->[$i]}, $n;
-    }
-}
-
-sub _pop {
-    my ($self, $i) = @_;
-
-    if ($i == 21) { # ㅇ
-        return shift @{$self->_stacks->[$i]};
-    }
-    elsif ($i == 27) { # ㅎ
-        return;
-    }
-    else {
-        return pop @{$self->_stacks->[$i]};
-    }
-}
-
-sub _duplicate {
-    my ($self, $i) = @_;
-
-    if ($i == 21) { # ㅇ
-        my $first = $self->_stacks->[$i]->[0];
-        unshift @{$self->_stacks->[$i]}, $first;
-    }
-    elsif ($i == 27) { # ㅎ
-        return;
-    }
-    else {
-        my $last = $self->_stacks->[$i]->[-1];
-        push @{$self->_stacks->[$i]}, $last;
-    }
-}
-
-sub _swap {
-    my ($self, $i) = @_;
-
-    if ($i == 21) { # ㅇ
-        my $first = $self->_stacks->[$i]->[0];
-        my $second = $self->_stacks->[$i]->[1];
-        $self->_stacks->[$i]->[0] = $second;
-        $self->_stacks->[$i]->[1] = $first;
-    }
-    elsif ($i == 27) { # ㅎ
-        return;
-    }
-    else {
-        my $last = $self->_stacks->[$i]->[-1];
-        my $next = $self->_stacks->[$i]->[-2];
-        $self->_stacks->[$i]->[-1] = $next;
-        $self->_stacks->[$i]->[-2] = $last;
-    }
-}
-
-sub _initialize {
+sub execute {
     my ($self) = @_;
 
-    $self->_is_stopped(1);
-    $self->_x(0);
-    $self->_y(0);
-    $self->_dx(0);
-    $self->_dy(1);
-    $self->_stack_index(0);
-    $self->_stacks([]);
-
-    my $codespace = $self->_build_codespace($self->_source);
-    $self->_codespace($codespace);
-}
-
-sub _move_cursor {
-    my ($self) = @_;
-
-    $self->_x($self->_x + $self->_dx);
-    $self->_y($self->_y + $self->_dy);
-
-    if ($self->_y < 0) {
-        $self->_y(scalar @{$self->_codespace} - 1);
-    }
-    if ($self->_y >= scalar @{$self->_codespace}) {
-        $self->_y(0);
-    }
-
-    if ($self->_x < 0) {
-        $self->_x(scalar @{$self->_codespace->[$self->_y]} - 1);
-    }
-    if ($self->_x >= scalar @{$self->_codespace->[$self->_y]} &&
-        $self->_dx != 0) {
-        $self->_x(0);
-    }
+    $self->_is_stopped(0);
+    $self->_step();
 }
 
 sub _step {
@@ -329,6 +245,28 @@ sub _step {
     }
 }
 
+sub _move_cursor {
+    my ($self) = @_;
+
+    $self->_x($self->_x + $self->_dx);
+    $self->_y($self->_y + $self->_dy);
+
+    if ($self->_y < 0) {
+        $self->_y(scalar @{$self->_codespace} - 1);
+    }
+    if ($self->_y >= scalar @{$self->_codespace}) {
+        $self->_y(0);
+    }
+
+    if ($self->_x < 0) {
+        $self->_x(scalar @{$self->_codespace->[$self->_y]} - 1);
+    }
+    if ($self->_x >= scalar @{$self->_codespace->[$self->_y]} &&
+        $self->_dx != 0) {
+        $self->_x(0);
+    }
+}
+
 sub _get_deltas_upon_jung {
     my ($self, $jung) = @_;
 
@@ -370,6 +308,67 @@ sub _get_deltas_upon_jung {
     }
     else {
         return ($dx, $dy);
+    }
+}
+
+sub _push {
+    my ($self, $i, $n) = @_;
+
+    if ($i == 27) { # ㅎ
+        return;
+    }
+    else {
+        push @{$self->_stacks->[$i]}, $n;
+    }
+}
+
+sub _pop {
+    my ($self, $i) = @_;
+
+    if ($i == 21) { # ㅇ
+        return shift @{$self->_stacks->[$i]};
+    }
+    elsif ($i == 27) { # ㅎ
+        return;
+    }
+    else {
+        return pop @{$self->_stacks->[$i]};
+    }
+}
+
+sub _duplicate {
+    my ($self, $i) = @_;
+
+    if ($i == 21) { # ㅇ
+        my $first = $self->_stacks->[$i]->[0];
+        unshift @{$self->_stacks->[$i]}, $first;
+    }
+    elsif ($i == 27) { # ㅎ
+        return;
+    }
+    else {
+        my $last = $self->_stacks->[$i]->[-1];
+        push @{$self->_stacks->[$i]}, $last;
+    }
+}
+
+sub _swap {
+    my ($self, $i) = @_;
+
+    if ($i == 21) { # ㅇ
+        my $first = $self->_stacks->[$i]->[0];
+        my $second = $self->_stacks->[$i]->[1];
+        $self->_stacks->[$i]->[0] = $second;
+        $self->_stacks->[$i]->[1] = $first;
+    }
+    elsif ($i == 27) { # ㅎ
+        return;
+    }
+    else {
+        my $last = $self->_stacks->[$i]->[-1];
+        my $next = $self->_stacks->[$i]->[-2];
+        $self->_stacks->[$i]->[-1] = $next;
+        $self->_stacks->[$i]->[-2] = $last;
     }
 }
 
