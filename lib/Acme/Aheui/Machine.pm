@@ -4,6 +4,14 @@ use Moose;
 use Data::Dumper;
 use namespace::autoclean;
 
+use constant {
+    JONG_STROKE_NUMS =>
+        [0, 2, 4, 4, 2, 5, 5, 3, 5, 7, 9, 9, 7, 9,
+         9, 8, 4, 4, 6, 2, 4, 1, 3, 4, 3, 4, 4, 3],
+    REQUIRED_ELEM_NUMS =>
+        [0, 0, 2, 2, 2, 2, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 2, 2, 0],
+};
+
 has '_source' => (
     is => 'ro',
     isa => 'Str',
@@ -48,6 +56,14 @@ sub BUILD {
     my ($self, $args) = @_;
 
     $self->_initialize();
+}
+
+sub execute {
+    my ($self) = @_;
+
+    $self->_initialize();
+    $self->_is_stopped(0);
+    $self->_step();
 }
 
 sub _build_codespace {
@@ -176,6 +192,182 @@ sub _move_cursor {
         $self->_dx != 0) {
         $self->_x(0);
     }
+}
+
+sub _step {
+    my ($self) = @_;
+
+    while (1) {
+
+        if ($self->_is_stopped) {
+            last;
+        }
+
+        if ($self->_x >= scalar @{$self->_codespace->[$self->_y]}) {
+            $self->_move_cursor();
+            next;
+        }
+
+        my $c = $self->_codespace->[$self->_y]->[$self->_x];
+
+        if (!$c || $c->{cho} == -1) {
+            $self->_move_cursor();
+            next;
+        }
+
+        my $cho = $c->{cho};
+        my $jung = $c->{jung};
+        my $jong = $c->{jong};
+        my $si = $self->_stack_index;
+
+        my ($dx, $dy) = $self->_get_deltas_upon_jung($jung);
+        $self->_dx($dx);
+        $self->_dy($dy);
+
+        my $stack = $self->_stacks->[$si];
+        my $elem_num = ($stack) ? scalar @{$self->_stacks->[$si]} : 0;
+        if ($elem_num < REQUIRED_ELEM_NUMS->[$cho]) {
+            $self->_dx(-($self->_dx));
+            $self->_dy(-($self->_dy));
+        }
+        else {
+            if ($cho == 2) { # ㄴ
+                my $a = $self->_pop($si);
+                my $b = $self->_pop($si);
+                $self->_push($si, int($b/$a));
+            }
+            elsif ($cho == 3) { # ㄷ
+                my $a = $self->_pop($si);
+                my $b = $self->_pop($si);
+                $self->_push($si, $b+$a);
+            }
+            elsif ($cho == 16) { # ㅌ
+                my $a = $self->_pop($si);
+                my $b = $self->_pop($si);
+                $self->_push($si, $b-$a);
+            }
+            elsif ($cho == 4) { # ㄸ
+                my $a = $self->_pop($si);
+                my $b = $self->_pop($si);
+                $self->_push($si, $b*$a);
+            }
+            elsif ($cho == 5) { # ㄹ
+                my $a = $self->_pop($si);
+                my $b = $self->_pop($si);
+                $self->_push($si, $b%$a);
+            }
+            elsif ($cho == 6) { # ㅁ
+                my $a = $self->_pop($si);
+                if ($jong == 21) { # jongㅇ
+                    $self->_output($a);
+                }
+                elsif ($jong == 27) { # jongㅎ
+                    my $unichar = pack 'U', $a;
+                    $self->_output($unichar);
+                }
+            }
+            elsif ($cho == 7) { # ㅂ
+                my $a = 0;
+                if ($jong == 21) { # jongㅇ
+                    $a = $self->_get_input_number();
+                }
+                elsif ($jong == 27) { # jongㅎ
+                    $a = unpack 'U', $self->_get_input_character();
+                }
+                else { # the other jongs
+                    $a = JONG_STROKE_NUMS->[$jong];
+                }
+                $self->_push($si, $a);
+            }
+            elsif ($cho == 8) { # ㅃ
+                $self->_duplicate($si);
+            }
+            elsif ($cho == 17) { # ㅍ
+                $self->_swap($si);
+            }
+            elsif ($cho == 9) { # ㅅ
+                $self->_stack_index = $si = $jong;
+            }
+            elsif ($cho == 10) { # ㅆ
+                $self->_push($jong, $self->_pop($si));
+            }
+            elsif ($cho == 12) { # ㅈ
+                my $a = $self->_pop($si);
+                my $b = $self->_pop($si);
+                my $in = ($b >= $a) ? 1 : 0;
+                $self->_push($si, $in);
+            }
+            elsif ($cho == 14) { # ㅊ
+                if ($self->_pop($si) == 0) {
+                    $self->_dx(-$dx);
+                    $self->_dy(-$dy);
+                }
+            }
+            elsif ($cho == 18) { # ㅎ
+                $self->_is_stopped(1);
+            }
+        }
+
+        $self->_move_cursor();
+    }
+}
+
+sub _get_deltas_upon_jung {
+    my ($self, $jung) = @_;
+
+    my $dx = $self->_dx;
+    my $dy = $self->_dy;
+
+    if ($jung == 0) {
+        return (1, 0); # ㅏ
+    }
+    elsif ($jung == 2) {
+        return (2, 0); # ㅑ
+    }
+    elsif ($jung == 4) {
+        return (-1, 0); # ㅓ
+    }
+    elsif ($jung == 6) {
+        return (-2, 0); # ㅕ
+    }
+    elsif ($jung == 8) {
+        return (0, -1); # ㅗ
+    }
+    elsif ($jung == 12) {
+        return (0, -2); # ㅛ
+    }
+    elsif ($jung == 13) {
+        return (0, 1); # ㅜ
+    }
+    elsif ($jung == 17) {
+        return (0, 2); # ㅠ
+    }
+    elsif ($jung == 18) {
+        return ($dx, -$dy); # ㅡ
+    }
+    elsif ($jung == 19) {
+        return (-$dx, -$dy); # ㅢ
+    }
+    elsif ($jung == 20) {
+        return (-$dx, $dy); # ㅣ
+    }
+    else {
+        return ($dx, $dy);
+    }
+}
+
+sub _output {
+    my ($self, $str) = @_;
+
+    print $str;
+}
+
+sub _get_input_character {
+    return 'a';
+}
+
+sub _get_input_number {
+    return 3;
 }
 
 __PACKAGE__->meta->make_immutable;

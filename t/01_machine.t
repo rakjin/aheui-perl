@@ -3,6 +3,7 @@ use utf8;
 use strict;
 use warnings;
 use Test::More;
+use Capture::Tiny ':all';
 
 BEGIN {
 	use_ok( 'Acme::Aheui::Machine' );
@@ -232,6 +233,26 @@ __SOURCE__
             test_stack($machine, $i);
         }
     }
+}
+
+{ # hello world
+    my $source = << '__SOURCE__';
+밤밣따빠밣밟따뿌
+빠맣파빨받밤뚜뭏
+돋밬탕빠맣붏두붇
+볻뫃박발뚷투뭏붖
+뫃도뫃희멓뭏뭏붘
+뫃봌토범더벌뿌뚜
+뽑뽀멓멓더벓뻐뚠
+뽀덩벐멓뻐덕더벅
+__SOURCE__
+
+    my ($stdout, $stderr, @result) = capture {
+        my $machine = Acme::Aheui::Machine->new( source => $source );
+        $machine->execute();
+    };
+    is( $stdout, "Hello, world!\n" );
+    is( $stderr, '' );
 }
 
 done_testing();
