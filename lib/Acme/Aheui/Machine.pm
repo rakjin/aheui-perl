@@ -80,7 +80,6 @@ sub BUILD {
 sub execute {
     my ($self) = @_;
 
-    $self->_initialize();
     $self->_is_stopped(0);
     $self->_step();
 }
