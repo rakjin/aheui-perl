@@ -7,7 +7,6 @@ use namespace::autoclean;
 
 =head1 SYNOPSIS
 
-    use utf8;
     use Acme::Aheui::Machine;
     my $machine = Acme::Aheui::Machine->new( source => '아희' );
     $machine->execute();
@@ -29,6 +28,12 @@ use constant {
     REQUIRED_ELEM_NUMS =>
         [0, 0, 2, 2, 2, 2, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 2, 2, 0],
 };
+
+=attr source
+
+Line-separated source code of an aheui program to be executed.
+
+=cut
 
 has '_source' => (
     is => 'ro',
@@ -69,6 +74,15 @@ has '_x' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
 has '_y' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
 has '_dx' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
 has '_dy' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
+
+
+=method new
+
+    my $machine = Acme::Aheui::Machine->new( source => '아희' );
+
+This method will create and return Acme::Aheui::Machine object.
+
+=cut
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -120,6 +134,14 @@ sub _disassemble_hangul_char {
         return {'cho' => -1, 'jung' => -1, 'jong' => -1};
     }
 }
+
+=method execute
+
+    $machine->execute();
+
+This method will execute the aheui program.
+
+=cut
 
 sub execute {
     my ($self) = @_;
