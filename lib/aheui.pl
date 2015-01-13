@@ -1,8 +1,11 @@
 #/usr/bin/env perl
 use utf8;
-use Encode qw/encode decode/;
+use strict;
+use warnings;
+use Encode qw/decode/;
 use Acme::Aheui::Machine;
-use File::Slurp;
+
+binmode STDIN,':utf8';
 
 my ($filename) = @ARGV;
 
