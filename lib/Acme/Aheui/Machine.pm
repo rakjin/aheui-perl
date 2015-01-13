@@ -154,17 +154,19 @@ sub _step {
     my ($self) = @_;
 
     while (1) {
+        my $codespace = $self->_codespace;
+        my ($x, $y) = ($self->_x, $self->_y);
 
         if ($self->_is_stopped) {
             last;
         }
 
-        if ($self->_x >= scalar @{$self->_codespace->[$self->_y]}) {
+        if ($x > $#{$$codespace[$y]}) {
             $self->_move_cursor();
             next;
         }
 
-        my $c = $self->_codespace->[$self->_y]->[$self->_x];
+        my $c = $$codespace[$y][$x];
 
         if (!$c || $c->{cho} == -1) {
             $self->_move_cursor();
@@ -181,7 +183,7 @@ sub _step {
         $self->_dy($dy);
 
         my $stack = $self->_stacks->[$si];
-        my $elem_num = ($stack) ? scalar @{$self->_stacks->[$si]} : 0;
+        my $elem_num = ($stack) ? scalar @{$stack} : 0;
         if ($elem_num < REQUIRED_ELEM_NUMS->[$cho]) {
             $self->_dx(-($self->_dx));
             $self->_dy(-($self->_dy));
