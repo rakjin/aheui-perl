@@ -105,6 +105,22 @@ sub _pop {
     }
 }
 
+sub _duplicate {
+    my ($self, $i) = @_;
+
+    if ($i == 21) { # ㅇ
+        my $first = $self->_stacks->[$i]->[0];
+        unshift @{$self->_stacks->[$i]}, $first;
+    }
+    elsif ($i == 27) { # ㅎ
+        return;
+    }
+    else {
+        my $last = $self->_stacks->[$i]->[-1];
+        push @{$self->_stacks->[$i]}, $last;
+    }
+}
+
 sub _initialize {
     my ($self) = @_;
 
