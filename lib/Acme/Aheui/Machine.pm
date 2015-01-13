@@ -183,7 +183,7 @@ sub _initialize {
     $self->_x(0);
     $self->_y(0);
     $self->_dx(0);
-    $self->_dy(0);
+    $self->_dy(1);
     $self->_stack_index(0);
     $self->_stacks([]);
 
