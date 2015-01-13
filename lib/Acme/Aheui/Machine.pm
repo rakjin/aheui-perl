@@ -254,8 +254,8 @@ sub _step {
             }
             elsif ($cho == 14) { # ㅊ
                 if ($self->_pop($si) == 0) {
-                    $self->_dx(-$dx);
-                    $self->_dy(-$dy);
+                    $self->_dx(-($self->_dx));
+                    $self->_dy(-($self->_dy));
                 }
             }
             elsif ($cho == 18) { # ㅎ
