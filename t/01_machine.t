@@ -42,13 +42,13 @@ BEGIN {
 }
 
 { # move cursor
-    my $source = <<'SOURCE_01';
+    my $source = <<'__SOURCE__';
 가나다
 라마
 바사아자차
 카
 타파하
-SOURCE_01
+__SOURCE__
     
     my $machine = Acme::Aheui::Machine->new( source => $source );
     is( $machine->_x, 0 );
