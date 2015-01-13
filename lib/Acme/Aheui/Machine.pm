@@ -304,7 +304,7 @@ sub _step {
                 $self->_swap($si);
             }
             elsif ($cho == 9) { # ㅅ
-                $self->_stack_index = $si = $jong;
+                $self->_stack_index($jong);
             }
             elsif ($cho == 10) { # ㅆ
                 $self->_push($jong, $self->_pop($si));
