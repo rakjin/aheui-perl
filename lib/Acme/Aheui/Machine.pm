@@ -346,51 +346,54 @@ sub _push {
 
 sub _pop {
     my ($self, $i) = @_;
+    my $stack = $self->_stacks->[$i];
 
     if ($i == 21) { # ㅇ
-        return shift @{$self->_stacks->[$i]};
+        return shift @$stack;
     }
     elsif ($i == 27) { # ㅎ
         return;
     }
     else {
-        return pop @{$self->_stacks->[$i]};
+        return pop @$stack;
     }
 }
 
 sub _duplicate {
     my ($self, $i) = @_;
+    my $stack = $self->_stacks->[$i];
 
     if ($i == 21) { # ㅇ
-        my $first = $self->_stacks->[$i]->[0];
-        unshift @{$self->_stacks->[$i]}, $first;
+        my $first = $$stack[0];
+        unshift @$stack, $first;
     }
     elsif ($i == 27) { # ㅎ
         return;
     }
     else {
-        my $last = $self->_stacks->[$i]->[-1];
-        push @{$self->_stacks->[$i]}, $last;
+        my $last = $$stack[-1];
+        push @$stack, $last;
     }
 }
 
 sub _swap {
     my ($self, $i) = @_;
+    my $stack = $self->_stacks->[$i];
 
     if ($i == 21) { # ㅇ
-        my $first = $self->_stacks->[$i]->[0];
-        my $second = $self->_stacks->[$i]->[1];
-        $self->_stacks->[$i]->[0] = $second;
-        $self->_stacks->[$i]->[1] = $first;
+        my $first = $$stack[0];
+        my $second = $$stack[1];
+        $$stack[0] = $second;
+        $$stack[1] = $first;
     }
     elsif ($i == 27) { # ㅎ
         return;
     }
     else {
-        my $last = $self->_stacks->[$i]->[-1];
-        my $next = $self->_stacks->[$i]->[-2];
-        $self->_stacks->[$i]->[-1] = $next;
-        $self->_stacks->[$i]->[-2] = $last;
+        my $last = $$stack[-1];
+        my $next = $$stack[-2];
+        $$stack[-1] = $next;
+        $$stack[-2] = $last;
     }
 }
 
