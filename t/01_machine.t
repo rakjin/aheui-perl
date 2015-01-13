@@ -56,9 +56,10 @@ __SOURCE__
     is( $machine->_x, 0 );
     is( $machine->_y, 0 );
     is( $machine->_dx, 0 );
-    is( $machine->_dy, 0 );
+    is( $machine->_dy, 1 );
 
     $machine->_dx(1);
+    $machine->_dy(0);
     $machine->_move_cursor();
     is_deeply( [$machine->_x, $machine->_y], [1, 0] );
     $machine->_move_cursor();
