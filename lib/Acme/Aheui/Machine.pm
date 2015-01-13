@@ -269,21 +269,24 @@ sub _step {
 
 sub _move_cursor {
     my ($self) = @_;
+    my $codespace = $self->_codespace;
 
     $self->_x($self->_x + $self->_dx);
     $self->_y($self->_y + $self->_dy);
 
+    my $last_row_index = $#{ $codespace };
     if ($self->_y < 0) {
-        $self->_y(scalar @{$self->_codespace} - 1);
+        $self->_y($last_row_index);
     }
-    if ($self->_y >= scalar @{$self->_codespace}) {
+    if ($self->_y > $last_row_index) {
         $self->_y(0);
     }
 
+    my $last_char_index = $#{ @$codespace[$self->_y] };
     if ($self->_x < 0) {
-        $self->_x(scalar @{$self->_codespace->[$self->_y]} - 1);
+        $self->_x($last_char_index);
     }
-    if ($self->_x >= scalar @{$self->_codespace->[$self->_y]} &&
+    if ($self->_x > $last_char_index &&
         $self->_dx != 0) {
         $self->_x(0);
     }
