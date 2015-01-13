@@ -190,51 +190,51 @@ sub _step {
         }
         else {
             if ($cho == 2) { # ㄴ
-                my $a = $self->_pop($si);
-                my $b = $self->_pop($si);
-                $self->_push($si, int($b/$a));
+                my $m = $self->_pop($si);
+                my $n = $self->_pop($si);
+                $self->_push($si, int($n/$m));
             }
             elsif ($cho == 3) { # ㄷ
-                my $a = $self->_pop($si);
-                my $b = $self->_pop($si);
-                $self->_push($si, $b+$a);
+                my $m = $self->_pop($si);
+                my $n = $self->_pop($si);
+                $self->_push($si, $n+$m);
             }
             elsif ($cho == 16) { # ㅌ
-                my $a = $self->_pop($si);
-                my $b = $self->_pop($si);
-                $self->_push($si, $b-$a);
+                my $m = $self->_pop($si);
+                my $n = $self->_pop($si);
+                $self->_push($si, $n-$m);
             }
             elsif ($cho == 4) { # ㄸ
-                my $a = $self->_pop($si);
-                my $b = $self->_pop($si);
-                $self->_push($si, $b*$a);
+                my $m = $self->_pop($si);
+                my $n = $self->_pop($si);
+                $self->_push($si, $n*$m);
             }
             elsif ($cho == 5) { # ㄹ
-                my $a = $self->_pop($si);
-                my $b = $self->_pop($si);
-                $self->_push($si, $b%$a);
+                my $m = $self->_pop($si);
+                my $n = $self->_pop($si);
+                $self->_push($si, $n%$m);
             }
             elsif ($cho == 6) { # ㅁ
-                my $a = $self->_pop($si);
+                my $v = $self->_pop($si);
                 if ($jong == 21) { # jongㅇ
-                    $self->_output_number($a);
+                    $self->_output_number($v);
                 }
                 elsif ($jong == 27) { # jongㅎ
-                    $self->_output_code_as_character($a);
+                    $self->_output_code_as_character($v);
                 }
             }
             elsif ($cho == 7) { # ㅂ
-                my $a = 0;
+                my $v = 0;
                 if ($jong == 21) { # jongㅇ
-                    $a = $self->_get_input_number();
+                    $v = $self->_get_input_number();
                 }
                 elsif ($jong == 27) { # jongㅎ
-                    $a = $self->_get_input_character_as_code();
+                    $v = $self->_get_input_character_as_code();
                 }
                 else { # the other jongs
-                    $a = JONG_STROKE_NUMS->[$jong];
+                    $v = JONG_STROKE_NUMS->[$jong];
                 }
-                $self->_push($si, $a);
+                $self->_push($si, $v);
             }
             elsif ($cho == 8) { # ㅃ
                 $self->_duplicate($si);
@@ -249,9 +249,9 @@ sub _step {
                 $self->_push($jong, $self->_pop($si));
             }
             elsif ($cho == 12) { # ㅈ
-                my $a = $self->_pop($si);
-                my $b = $self->_pop($si);
-                my $in = ($b >= $a) ? 1 : 0;
+                my $m = $self->_pop($si);
+                my $n = $self->_pop($si);
+                my $in = ($n >= $m) ? 1 : 0;
                 $self->_push($si, $in);
             }
             elsif ($cho == 14) { # ㅊ
