@@ -104,7 +104,7 @@ sub _build_codespace {
 sub _disassemble_hangul_char {
     my ($self, $char) = @_;
 
-    if ($char =~ /\p{Hangul}/) {
+    if ($char =~ /[가-힣]/) {
         my $code = unpack 'U', $char;
         $code -= 0xAC00;
         my ($cho, $jung, $jong) = (int($code/28/21), ($code/28)%21, $code%28);
