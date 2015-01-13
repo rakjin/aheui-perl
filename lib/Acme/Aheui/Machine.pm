@@ -6,6 +6,23 @@ use Term::ReadKey;
 use Encode qw/encode/;
 use namespace::autoclean;
 
+=head1 SYNOPSIS
+
+    use utf8;
+    use Acme::Aheui::Machine;
+    my $machine = Acme::Aheui::Machine->new( source => '아희' );
+    $machine->execute();
+
+=head1 DESCRIPTION
+
+아희 인터프리터입니다.
+https://aheui.github.io/specification.ko/
+
+javascript 레퍼런스 구현체의 로직을 대부분 차용했습니다.
+https://github.com/aheui/jsaheui by Puzzlet Chung
+
+=cut
+
 use constant {
     JONG_STROKE_NUMS =>
         [0, 2, 4, 4, 2, 5, 5, 3, 5, 7, 9, 9, 7, 9,
