@@ -83,8 +83,8 @@ sub _disassemble_hangul_char {
 sub _push {
     my ($self, $i, $n) = @_;
 
-    if ($i == 27) {
-        ; # ㅎ
+    if ($i == 27) { # ㅎ
+        return;
     }
     else {
         push @{$self->_stacks->[$i]}, $n;

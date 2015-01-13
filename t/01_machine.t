@@ -140,11 +140,13 @@ SOURCE_01
     sub test_stack {
         my ($machine, $storage_index) = @_;
 
+        # a push and a pop
         my $in = $counter++;
         $machine->_push($storage_index, $in);
         my $out = $machine->_pop($storage_index);
-        is ( $in, $out );
+        is( $in, $out );
 
+        # pushes, pops
         my ($in1, $in2, $in3) = ($counter++, $counter++, $counter++);
         $machine->_push($storage_index, $in1);
         $machine->_push($storage_index, $in2);
@@ -152,17 +154,19 @@ SOURCE_01
         my $out3 = $machine->_pop($storage_index);
         my $out2 = $machine->_pop($storage_index);
         my $out1 = $machine->_pop($storage_index);
-        is_deeply ( [$in1, $in2, $in3], [$out1, $out2, $out3] );
+        is_deeply( [$in1, $in2, $in3], [$out1, $out2, $out3] );
     }
 
     sub test_queue {
         my ($machine, $storage_index) = @_;
 
+        # a push and a pop
         my $in = $counter++;
         $machine->_push($storage_index, $in);
         my $out = $machine->_pop($storage_index);
-        is ( $in, $out );
+        is( $in, $out );
 
+        # pushes, pops
         my ($in1, $in2, $in3) = ($counter++, $counter++, $counter++);
         $machine->_push($storage_index, $in1);
         $machine->_push($storage_index, $in2);
@@ -170,7 +174,7 @@ SOURCE_01
         my $out1 = $machine->_pop($storage_index);
         my $out2 = $machine->_pop($storage_index);
         my $out3 = $machine->_pop($storage_index);
-        is_deeply ( [$in1, $in2, $in3], [$out1, $out2, $out3] );
+        is_deeply( [$in1, $in2, $in3], [$out1, $out2, $out3] );
     }
 
     my $machine = Acme::Aheui::Machine->new( source => '' );
