@@ -166,6 +166,18 @@ SOURCE_01
         my $out_dup2 = $machine->_pop($storage_index);
         is( $later_in, $out_dup1 );
         is( $later_in, $out_dup2 );
+        $machine->_pop($storage_index);
+
+        # swap
+        $first_in = $counter++;
+        $later_in = $counter++;
+        $machine->_push($storage_index, $first_in);
+        $machine->_push($storage_index, $later_in);
+        $machine->_swap($storage_index);
+        my $first_out = $machine->_pop($storage_index);
+        my $later_out = $machine->_pop($storage_index);
+        is( $first_in, $first_out );
+        is( $later_in, $later_out );
     }
 
     sub test_queue {
@@ -197,6 +209,18 @@ SOURCE_01
         my $out_dup2 = $machine->_pop($storage_index);
         is( $first_in, $out_dup1 );
         is( $first_in, $out_dup2 );
+        $machine->_pop($storage_index);
+
+        # swap
+        $first_in = $counter++;
+        $later_in = $counter++;
+        $machine->_push($storage_index, $first_in);
+        $machine->_push($storage_index, $later_in);
+        $machine->_swap($storage_index);
+        my $first_out = $machine->_pop($storage_index);
+        my $later_out = $machine->_pop($storage_index);
+        is( $first_in, $later_out );
+        is( $later_in, $first_out );
     }
 
     my $machine = Acme::Aheui::Machine->new( source => '' );

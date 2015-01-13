@@ -121,6 +121,26 @@ sub _duplicate {
     }
 }
 
+sub _swap {
+    my ($self, $i) = @_;
+
+    if ($i == 21) { # ㅇ
+        my $first = $self->_stacks->[$i]->[0];
+        my $second = $self->_stacks->[$i]->[1];
+        $self->_stacks->[$i]->[0] = $second;
+        $self->_stacks->[$i]->[1] = $first;
+    }
+    elsif ($i == 27) { # ㅎ
+        return;
+    }
+    else {
+        my $last = $self->_stacks->[$i]->[-1];
+        my $next = $self->_stacks->[$i]->[-2];
+        $self->_stacks->[$i]->[-1] = $next;
+        $self->_stacks->[$i]->[-2] = $last;
+    }
+}
+
 sub _initialize {
     my ($self) = @_;
 
