@@ -10,7 +10,7 @@ else
     cd snippets
 fi
 
-chmod 755 ../lib/aheui.pl
-AHEUI="perl -I ../lib ../lib/aheui.pl" bash test.sh standard
+chmod 755 ../lib/aheui
+AHEUI="perl -I ../lib ../lib/aheui" bash test.sh standard
 cd ..
 
