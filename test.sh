@@ -1,5 +1,7 @@
 #!/bin/bash
 
+prove -l
+
 if [ -e snippets ]; then
     cd snippets
     git pull
