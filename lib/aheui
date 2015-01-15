@@ -9,13 +9,31 @@ binmode STDIN,':utf8';
 
 my ($filename) = @ARGV;
 
-die "Usage:\n\taheui source.aheui\n" unless $filename;
-die "'$filename' not found.\n" unless -e $filename;
+my $usage = << '__USAGE__';
+Usage:
+  aheui filename  : program read from source file
+  aheui           : program read from stdin until an empty line
+__USAGE__
 
-open(FH, $filename) or die "cannot open $filename.\n";
-my $source = join '', <FH>;
-close(FH);
-$source = decode('utf-8', $source);
+die $usage if ($filename && $filename =~ /^--?h(elp)?$/);
+
+my $source;
+if ($filename) {
+    open(FH, $filename) or die "cannot open $filename\n";
+    my $source = join '', <FH>;
+    close(FH);
+    $source = decode('utf-8', $source);
+}
+else {
+    my @lines = ();
+    while (my $line = <>) {
+        if ($line =~ /^\r?\n$/) {
+            last;
+        }
+        push @lines, $line;
+    }
+    $source = join '', @lines;
+}
 
 my $machine = Acme::Aheui::Machine->new( source => $source );
 $machine->execute();
