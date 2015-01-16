@@ -146,8 +146,22 @@ This method will execute the aheui program.
 sub execute {
     my ($self) = @_;
 
+    return unless $self->_has_initial_command();
+
     $self->_is_stopped(0);
     $self->_step();
+}
+
+sub _has_initial_command {
+    my ($self) = @_;
+
+    for my $row (@{$self->_codespace}) {
+        my $first_command = @$row[0];
+        if ($first_command && $$first_command{cho} != -1) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 sub _step {

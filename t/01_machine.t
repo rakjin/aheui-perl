@@ -257,6 +257,25 @@ __SOURCE__
     is( $stderr, '' );
 }
 
+{ # exit without infinite loop in case of null program
+    my ($stdout, $stderr, @result) = capture {
+        my $machine = Acme::Aheui::Machine->new( source => '' );
+        $machine->execute();
+    };
+    is( $stdout, '' );
+    is( $stderr, '' );
+}
+
+{ # exit without infinite loop in case of no initial command
+    my $source = "abc\ndef\nghi\n\n\n_반밧나망히\n";
+    my ($stdout, $stderr, @result) = capture {
+        my $machine = Acme::Aheui::Machine->new( source => $source );
+        $machine->execute();
+    };
+    is( $stdout, '' );
+    is( $stderr, '' );
+}
+
 { # input number
     my ($stdout, $stderr, @result) = capture {
         my $stdin;
