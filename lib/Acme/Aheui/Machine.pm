@@ -1,9 +1,7 @@
 package Acme::Aheui::Machine;
 use utf8;
-use Moose;
 use Term::ReadKey;
 use Encode qw/encode/;
-use namespace::autoclean;
 
 =head1 SYNOPSIS
 
@@ -29,53 +27,6 @@ use constant {
         [0, 0, 2, 2, 2, 2, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 2, 2, 0],
 };
 
-=attr source
-
-Line-separated source code of an aheui program to be executed.
-
-=cut
-
-has '_source' => (
-    is => 'ro',
-    isa => 'Str',
-    init_arg => 'source',
-    required => 1,
-);
-
-has '_codespace' => (
-    is => 'rw',
-    isa => 'ArrayRef[ArrayRef[HashRef]]',
-    init_arg => undef,
-);
-
-has '_stacks' => (
-    is => 'rw',
-    isa => 'ArrayRef[ArrayRef[Int]]',
-    init_arg => undef,
-    default => sub { [] },
-);
-
-has '_stack_index' => (
-    is => 'rw',
-    isa => 'Int',
-    init_arg => undef,
-    default => 0,
-);
-
-has '_is_stopped' => (
-    is => 'rw',
-    isa => 'Bool',
-    init_arg => undef,
-    default => 1,
-);
-
-
-has '_x' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
-has '_y' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
-has '_dx' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
-has '_dy' => (is => 'rw', isa => 'Int', init_arg => undef, default => 0);
-
-
 =method new
 
     my $machine = Acme::Aheui::Machine->new( source => '아희' );
@@ -84,25 +35,42 @@ This method will create and return Acme::Aheui::Machine object.
 
 =cut
 
-sub BUILD {
-    my ($self, $args) = @_;
+sub new {
+    my $class = shift;
+    my %args = @_;
+    
+    my $source = $args{source} || '';
+
+    my $self = {
+        _source => $source,
+        _codespace => undef,
+        _stacks => undef,
+        _stack_index => 0,
+        _is_stopped => 0,
+        _x => 0,
+        _y => 0,
+        _dx => 0,
+        _dy => 0,
+    };
+    bless $self, $class;
 
     $self->_initialize();
+    return $self;
 }
 
 sub _initialize {
     my ($self) = @_;
 
-    $self->_is_stopped(1);
-    $self->_x(0);
-    $self->_y(0);
-    $self->_dx(0);
-    $self->_dy(1);
-    $self->_stack_index(0);
-    $self->_stacks([]);
+    $self->{_stacks} = [];
+    $self->{_stack_index} = 0;
+    $self->{_is_stopped} = 1;
+    $self->{_x} = 0;
+    $self->{_y} = 0;
+    $self->{_dx} = 0;
+    $self->{_dy} = 1;
 
-    my $codespace = $self->_build_codespace($self->_source);
-    $self->_codespace($codespace);
+    my $codespace = $self->_build_codespace($self->{_source});
+    $self->{_codespace} = $codespace;
 }
 
 sub _build_codespace {
@@ -148,14 +116,14 @@ sub execute {
 
     return unless $self->_has_initial_command();
 
-    $self->_is_stopped(0);
+    $self->{_is_stopped} = 0;
     $self->_step();
 }
 
 sub _has_initial_command {
     my ($self) = @_;
 
-    for my $row (@{$self->_codespace}) {
+    for my $row (@{ $self->{_codespace} }) {
         my $first_command = @$row[0];
         if ($first_command && $$first_command{cho} != -1) {
             return 1;
@@ -168,10 +136,10 @@ sub _step {
     my ($self) = @_;
 
     while (1) {
-        my $codespace = $self->_codespace;
-        my ($x, $y) = ($self->_x, $self->_y);
+        my $codespace = $self->{_codespace};
+        my ($x, $y) = ($self->{_x}, $self->{_y});
 
-        if ($self->_is_stopped) {
+        if ($self->{_is_stopped}) {
             last;
         }
 
@@ -190,17 +158,17 @@ sub _step {
         my $cho = $c->{cho};
         my $jung = $c->{jung};
         my $jong = $c->{jong};
-        my $si = $self->_stack_index;
+        my $si = $self->{_stack_index};
 
         my ($dx, $dy) = $self->_get_deltas_upon_jung($jung);
-        $self->_dx($dx);
-        $self->_dy($dy);
+        $self->{_dx} = $dx;
+        $self->{_dy} = $dy;
 
-        my $stack = $self->_stacks->[$si];
+        my $stack = $self->{_stacks}->[$si];
         my $elem_num = ($stack) ? scalar @{$stack} : 0;
         if ($elem_num < REQUIRED_ELEM_NUMS->[$cho]) {
-            $self->_dx(-($self->_dx));
-            $self->_dy(-($self->_dy));
+            $self->{_dx} = -($self->{_dx});
+            $self->{_dy} = -($self->{_dy});
         }
         else {
             if ($cho == 2) { # ㄴ
@@ -257,7 +225,7 @@ sub _step {
                 $self->_swap($si);
             }
             elsif ($cho == 9) { # ㅅ
-                $self->_stack_index($jong);
+                $self->{_stack_index} = $jong;
             }
             elsif ($cho == 10) { # ㅆ
                 $self->_push($jong, $self->_pop($si));
@@ -270,12 +238,12 @@ sub _step {
             }
             elsif ($cho == 14) { # ㅊ
                 if ($self->_pop($si) == 0) {
-                    $self->_dx(-($self->_dx));
-                    $self->_dy(-($self->_dy));
+                    $self->{_dx} = -($self->{_dx});
+                    $self->{_dy} = -($self->{_dy});
                 }
             }
             elsif ($cho == 18) { # ㅎ
-                $self->_is_stopped(1);
+                $self->{_is_stopped} = 1;
             }
         }
 
@@ -285,34 +253,34 @@ sub _step {
 
 sub _move_cursor {
     my ($self) = @_;
-    my $codespace = $self->_codespace;
+    my $codespace = $self->{_codespace};
 
-    $self->_x($self->_x + $self->_dx);
-    $self->_y($self->_y + $self->_dy);
+    $self->{_x} += $self->{_dx};
+    $self->{_y} += $self->{_dy};
 
     my $last_row_index = $#{ $codespace };
-    if ($self->_y < 0) {
-        $self->_y($last_row_index);
+    if ($self->{_y} < 0) {
+        $self->{_y} = $last_row_index;
     }
-    if ($self->_y > $last_row_index) {
-        $self->_y(0);
+    if ($self->{_y} > $last_row_index) {
+        $self->{_y} = 0;
     }
 
-    my $last_char_index = $#{ @$codespace[$self->_y] };
-    if ($self->_x < 0) {
-        $self->_x($last_char_index);
+    my $last_char_index = $#{ @$codespace[$self->{_y}] };
+    if ($self->{_x} < 0) {
+        $self->{_x} = $last_char_index;
     }
-    if ($self->_x > $last_char_index &&
-        $self->_dx != 0) {
-        $self->_x(0);
+    if ($self->{_x} > $last_char_index &&
+        $self->{_dx} != 0) {
+        $self->{_x} = 0;
     }
 }
 
 sub _get_deltas_upon_jung {
     my ($self, $jung) = @_;
 
-    my $dx = $self->_dx;
-    my $dy = $self->_dy;
+    my $dx = $self->{_dx};
+    my $dy = $self->{_dy};
 
     if ($jung == 0) {
         return (1, 0); # ㅏ
@@ -359,13 +327,13 @@ sub _push {
         return;
     }
     else {
-        push @{$self->_stacks->[$i]}, $n;
+        push @{$self->{_stacks}->[$i]}, $n;
     }
 }
 
 sub _pop {
     my ($self, $i) = @_;
-    my $stack = $self->_stacks->[$i];
+    my $stack = $self->{_stacks}->[$i];
 
     if ($i == 21) { # ㅇ
         return shift @$stack;
@@ -380,7 +348,7 @@ sub _pop {
 
 sub _duplicate {
     my ($self, $i) = @_;
-    my $stack = $self->_stacks->[$i];
+    my $stack = $self->{_stacks}->[$i];
 
     if ($i == 21) { # ㅇ
         my $first = $$stack[0];
@@ -397,7 +365,7 @@ sub _duplicate {
 
 sub _swap {
     my ($self, $i) = @_;
-    my $stack = $self->_stacks->[$i];
+    my $stack = $self->{_stacks}->[$i];
 
     if ($i == 21) { # ㅇ
         my $first = $$stack[0];
@@ -442,5 +410,4 @@ sub _get_input_number {
     return int(ReadLine(0));
 }
 
-__PACKAGE__->meta->make_immutable;
 1;
