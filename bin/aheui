@@ -3,7 +3,7 @@ use utf8;
 use strict;
 use warnings;
 use Encode qw/decode/;
-use Acme::Aheui::Interpreter;
+use Acme::Aheui;
 
 binmode STDIN,':utf8';
 
@@ -35,5 +35,5 @@ else {
     $source = join '', @lines;
 }
 
-my $interpreter = Acme::Aheui::Interpreter->new( source => $source );
+my $interpreter = Acme::Aheui->new( source => $source );
 $interpreter->execute();

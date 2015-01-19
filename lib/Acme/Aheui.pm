@@ -1,4 +1,4 @@
-package Acme::Aheui::Interpreter;
+package Acme::Aheui;
 use utf8;
 use Term::ReadKey;
 use Encode qw/encode/;
@@ -7,12 +7,12 @@ use Encode qw/encode/;
 
 =head1 NAME
 
-Acme::Aheui::Interpreter - an aheui interpreter
+Acme::Aheui - an aheui interpreter
 
 =head1 SYNOPSIS
 
-    use Acme::Aheui::Interpreter;
-    my $interpreter = Acme::Aheui::Interpreter->new( source => '아희' );
+    use Acme::Aheui;
+    my $interpreter = Acme::Aheui->new( source => '아희' );
     $interpreter->execute();
 
 =head1 DESCRIPTION
@@ -38,9 +38,9 @@ use constant {
 
 =head2 new
 
-    my $interpreter = Acme::Aheui::Interpreter->new( source => '아희' );
+    my $interpreter = Acme::Aheui->new( source => '아희' );
 
-This method will create and return C<Acme::Aheui::Interpreter> object.
+This method will create and return C<Acme::Aheui> object.
 
 =cut
 

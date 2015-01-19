@@ -7,12 +7,12 @@ use Capture::Tiny ':all';
 use Encode qw/decode/;
 
 BEGIN {
-	use_ok( 'Acme::Aheui::Interpreter' );
+	use_ok( 'Acme::Aheui' );
 }
 
 { # new interpreter and its internal codespace
     my $source = "가각\r\n힢힣\nA *";
-    my $interpreter = Acme::Aheui::Interpreter->new( source => $source );
+    my $interpreter = Acme::Aheui->new( source => $source );
     ok( $interpreter );
     is( $$interpreter{_codespace}[0][0]{cho}, 0 );
     is( $$interpreter{_codespace}[0][0]{jung}, 0 );
@@ -52,7 +52,7 @@ BEGIN {
 타파하
 __SOURCE__
     
-    my $interpreter = Acme::Aheui::Interpreter->new( source => $source );
+    my $interpreter = Acme::Aheui->new( source => $source );
     is( $interpreter->{_x}, 0 );
     is( $interpreter->{_y}, 0 );
     is( $interpreter->{_dx}, 0 );
@@ -226,7 +226,7 @@ __SOURCE__
         is( $later_in, $first_out );
     }
 
-    my $interpreter = Acme::Aheui::Interpreter->new( source => '' );
+    my $interpreter = Acme::Aheui->new( source => '' );
     for my $i (0..26) {
         if ($i == 21) { # ㅇ queue
             test_queue($interpreter, $i);
@@ -250,7 +250,7 @@ __SOURCE__
 __SOURCE__
 
     my ($stdout, $stderr, @result) = capture {
-        my $interpreter = Acme::Aheui::Interpreter->new( source => $source );
+        my $interpreter = Acme::Aheui->new( source => $source );
         $interpreter->execute();
     };
     is( $stdout, "Hello, world!\n" );
@@ -259,7 +259,7 @@ __SOURCE__
 
 { # exit without infinite loop in case of null program
     my ($stdout, $stderr, @result) = capture {
-        my $interpreter = Acme::Aheui::Interpreter->new( source => '' );
+        my $interpreter = Acme::Aheui->new( source => '' );
         $interpreter->execute();
     };
     is( $stdout, '' );
@@ -269,7 +269,7 @@ __SOURCE__
 { # exit without infinite loop in case of no initial command
     my $source = "abc\ndef\nghi\n\n\n_반밧나망히\n";
     my ($stdout, $stderr, @result) = capture {
-        my $interpreter = Acme::Aheui::Interpreter->new( source => $source );
+        my $interpreter = Acme::Aheui->new( source => $source );
         $interpreter->execute();
     };
     is( $stdout, '' );
@@ -281,7 +281,7 @@ __SOURCE__
         my $stdin;
         open($stdin,'<&STDIN');
         *STDIN = *DATA;
-        my $interpreter = Acme::Aheui::Interpreter->new( source => '방빠망망히' );
+        my $interpreter = Acme::Aheui->new( source => '방빠망망히' );
         $interpreter->execute();
         *STDIN = $stdin;
     };
@@ -294,7 +294,7 @@ __SOURCE__
         my $stdin;
         open($stdin,'<&STDIN');
         *STDIN = *DATA;
-        my $interpreter = Acme::Aheui::Interpreter->new( source => '밯밯맣맣히' );
+        my $interpreter = Acme::Aheui->new( source => '밯밯맣맣히' );
         $interpreter->execute();
         *STDIN = $stdin;
     };
