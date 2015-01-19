@@ -40,48 +40,32 @@ sub new {
     my %args = @_;
     
     my $source = $args{source} || '';
+    my $codespace = build_codespace($source);
 
     my $self = {
-        _source => $source,
-        _codespace => undef,
-        _stacks => undef,
+        _codespace => $codespace,
+        _stacks => [],
         _stack_index => 0,
-        _is_stopped => 0,
+        _is_stopped => 1,
         _x => 0,
         _y => 0,
         _dx => 0,
-        _dy => 0,
+        _dy => 1,
     };
     bless $self, $class;
 
-    $self->_initialize();
     return $self;
 }
 
-sub _initialize {
-    my ($self) = @_;
-
-    $self->{_stacks} = [];
-    $self->{_stack_index} = 0;
-    $self->{_is_stopped} = 1;
-    $self->{_x} = 0;
-    $self->{_y} = 0;
-    $self->{_dx} = 0;
-    $self->{_dy} = 1;
-
-    my $codespace = $self->_build_codespace($self->{_source});
-    $self->{_codespace} = $codespace;
-}
-
-sub _build_codespace {
-    my ($self, $source) = @_;
+sub build_codespace {
+    my ($source) = @_;
 
     my @lines = split /\r?\n/, $source;
     my @rows = ();
     for my $line (@lines) {
         my @row = ();
         for my $char (split //, $line) {
-            my $disassembled = $self->_disassemble_hangul_char($char);
+            my $disassembled = disassemble_hangul_char($char);
             push @row, $disassembled;
         }
         push @rows, \@row;
@@ -89,8 +73,8 @@ sub _build_codespace {
     return \@rows;
 }
 
-sub _disassemble_hangul_char {
-    my ($self, $char) = @_;
+sub disassemble_hangul_char {
+    my ($char) = @_;
 
     if ($char =~ /[가-힣]/) {
         my $code = unpack 'U', $char;
