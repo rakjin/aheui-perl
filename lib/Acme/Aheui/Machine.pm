@@ -3,6 +3,12 @@ use utf8;
 use Term::ReadKey;
 use Encode qw/encode/;
 
+=encoding utf8
+
+=head1 NAME
+
+Acme::Aheui::Machine - an aheui interpreter
+
 =head1 SYNOPSIS
 
     use Acme::Aheui::Machine;
@@ -11,11 +17,12 @@ use Encode qw/encode/;
 
 =head1 DESCRIPTION
 
-아희 인터프리터입니다.
-https://aheui.github.io/specification.ko/
+An aheui interpreter.
 
-javascript 레퍼런스 구현체의 로직을 대부분 차용했습니다.
-https://github.com/aheui/jsaheui by Puzzlet Chung
+See aheui language specification at L<https://aheui.github.io/specification.en/>
+
+Most of the logic is based on the reference implementation by Puzzlet Chung.
+(L<https://github.com/aheui/jsaheui>)
 
 =cut
 
@@ -27,11 +34,13 @@ use constant {
         [0, 0, 2, 2, 2, 2, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 2, 2, 0],
 };
 
-=method new
+=head1 PUBLIC METHODS
+
+=head2 new
 
     my $machine = Acme::Aheui::Machine->new( source => '아희' );
 
-This method will create and return Acme::Aheui::Machine object.
+This method will create and return C<Acme::Aheui::Machine> object.
 
 =cut
 
@@ -87,11 +96,12 @@ sub disassemble_hangul_char {
     }
 }
 
-=method execute
+=head2 execute
 
     $machine->execute();
 
 This method will execute the aheui program.
+C<STDIN> and/or C<STDOUT> will be used if the aheui program uses I/O.
 
 =cut
 
@@ -393,5 +403,18 @@ sub _get_input_number {
 
     return int(ReadLine(0));
 }
+
+=head1 AUTHOR
+
+Rakjin Hwang, C<< <rakjin@cpan.org> >>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2015 by Rakjin Hwang, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
 
 1;
