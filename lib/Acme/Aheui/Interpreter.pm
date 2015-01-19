@@ -1,4 +1,4 @@
-package Acme::Aheui::Machine;
+package Acme::Aheui::Interpreter;
 use utf8;
 use Term::ReadKey;
 use Encode qw/encode/;
@@ -7,13 +7,13 @@ use Encode qw/encode/;
 
 =head1 NAME
 
-Acme::Aheui::Machine - an aheui interpreter
+Acme::Aheui::Interpreter - an aheui interpreter
 
 =head1 SYNOPSIS
 
-    use Acme::Aheui::Machine;
-    my $machine = Acme::Aheui::Machine->new( source => '아희' );
-    $machine->execute();
+    use Acme::Aheui::Interpreter;
+    my $interpreter = Acme::Aheui::Interpreter->new( source => '아희' );
+    $interpreter->execute();
 
 =head1 DESCRIPTION
 
@@ -38,9 +38,9 @@ use constant {
 
 =head2 new
 
-    my $machine = Acme::Aheui::Machine->new( source => '아희' );
+    my $interpreter = Acme::Aheui::Interpreter->new( source => '아희' );
 
-This method will create and return C<Acme::Aheui::Machine> object.
+This method will create and return C<Acme::Aheui::Interpreter> object.
 
 =cut
 
@@ -98,7 +98,7 @@ sub disassemble_hangul_char {
 
 =head2 execute
 
-    $machine->execute();
+    $interpreter->execute();
 
 This method will execute the aheui program.
 C<STDIN> and/or C<STDOUT> will be used if the aheui program uses I/O.
