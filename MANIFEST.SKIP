@@ -1,0 +1,8 @@
+#!include_default
+
+# Avoid archives of this distribution
+\bAcme-Aheui-[\d\.\_]+
+
+^README\.md$
+^snippets\b
+^test\.sh$

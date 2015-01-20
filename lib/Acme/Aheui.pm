@@ -20,17 +20,24 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
+Code:
+
     use Acme::Aheui;
     my $interpreter = Acme::Aheui->new( source => '아희' );
     $interpreter->execute();
+
+CLI:
+
+    aheui filename  : program read from source file
+    aheui           : program read from stdin until an empty line
 
 =head1 DESCRIPTION
 
 An aheui interpreter.
 
-See aheui language specification at L<https://aheui.github.io/specification.en/>
+See aheui language specification at L<https://aheui.github.io/specification.en>
 
-Most of the logic is based on the reference implementation by Puzzlet Chung.
+Most logic is based on the reference implementation by Puzzlet Chung.
 (L<https://github.com/aheui/jsaheui>)
 
 =cut
@@ -413,16 +420,25 @@ sub _get_input_number {
     return int(ReadLine(0));
 }
 
+=head1 INSTALLATION
+
+To install this module, run the following commands:
+
+    perl Build.PL
+    ./Build
+    ./Build test
+    ./Build install
+
 =head1 AUTHOR
 
 Rakjin Hwang, C<< <rakjin@cpan.org> >>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2015 by Rakjin Hwang, all rights reserved.
+Copyright 2015 Rakjin Hwang.
 
-This program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut
 
