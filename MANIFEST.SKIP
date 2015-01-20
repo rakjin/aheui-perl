@@ -1,5 +1,7 @@
 #!include_default
 
+^MANIFEST\.SKIP$
+
 # Avoid archives of this distribution
 \bAcme-Aheui-[\d\.\_]+
 

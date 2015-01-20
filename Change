@@ -1,5 +1,9 @@
 Revision history for perl module Acme::Aheui
 
+0.02 2015-01-20
+
+ - Return termination code
+
 0.01 2015-01-20
 
  - Initial release

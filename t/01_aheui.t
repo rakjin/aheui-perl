@@ -237,6 +237,17 @@ __SOURCE__
     }
 }
 
+{ # termination code
+    my $source = "밠히\n";
+    my ($stdout, $stderr, @result) = capture {
+        my $interpreter = Acme::Aheui->new( source => $source );
+        $interpreter->execute();
+    };
+    is( $stdout, '' );
+    is( $stderr, '' );
+    is( $result[0], 7 );
+}
+
 { # hello world
     my $source = << '__SOURCE__';
 밤밣따빠밣밟따뿌

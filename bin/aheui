@@ -36,4 +36,4 @@ else {
 }
 
 my $interpreter = Acme::Aheui->new( source => $source );
-$interpreter->execute();
+exit $interpreter->execute();

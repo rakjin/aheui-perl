@@ -11,11 +11,11 @@ Acme::Aheui - an aheui interpreter
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 =head1 SYNOPSIS
@@ -71,7 +71,6 @@ sub new {
         _codespace => $codespace,
         _stacks => [],
         _stack_index => 0,
-        _is_stopped => 1,
         _x => 0,
         _y => 0,
         _dx => 0,
@@ -124,10 +123,8 @@ C<STDIN> and/or C<STDOUT> will be used if the aheui program uses I/O.
 sub execute {
     my ($self) = @_;
 
-    return unless $self->_has_initial_command();
-
-    $self->{_is_stopped} = 0;
-    $self->_step();
+    return 0 unless $self->_has_initial_command();
+    return $self->_step();
 }
 
 sub _has_initial_command {
@@ -148,10 +145,6 @@ sub _step {
     while (1) {
         my $codespace = $self->{_codespace};
         my ($x, $y) = ($self->{_x}, $self->{_y});
-
-        if ($self->{_is_stopped}) {
-            last;
-        }
 
         if ($x > $#{$$codespace[$y]}) {
             $self->_move_cursor();
@@ -253,7 +246,8 @@ sub _step {
                 }
             }
             elsif ($cho == 18) { # ㅎ
-                $self->{_is_stopped} = 1;
+                my $ret = $self->_pop($si) || 0;
+                return $ret;
             }
         }
 
