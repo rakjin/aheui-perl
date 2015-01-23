@@ -238,7 +238,7 @@ __SOURCE__
 }
 
 { # termination code
-    my $source = "밠히\n";
+    my $source = '밠히';
     my ($stdout, $stderr, @result) = capture {
         my $interpreter = Acme::Aheui->new( source => $source );
         $interpreter->execute();
