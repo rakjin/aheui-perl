@@ -24,6 +24,7 @@ our $VERSION = '0.02';
 
 Code:
 
+    use utf8;
     use Acme::Aheui;
     my $interpreter = Acme::Aheui->new( source => '아희' );
     $interpreter->execute();
@@ -117,8 +118,8 @@ sub disassemble_hangul_char {
 
     $interpreter->execute();
 
-This method will execute the aheui program.
-C<STDIN> and/or C<STDOUT> will be used if the aheui program uses I/O.
+This method will execute the aheui program and return the exit code.
+It may use C<STDIN> and/or C<STDOUT> if the aheui program uses I/O.
 
 =cut
 
