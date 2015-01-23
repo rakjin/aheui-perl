@@ -2,5 +2,6 @@ bin/aheui
 Build.PL
 Change
 lib/Acme/Aheui.pm
+LICENSE
 MANIFEST
 t/01_aheui.t

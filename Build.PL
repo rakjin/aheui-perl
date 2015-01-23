@@ -10,6 +10,7 @@ Module::Build->new(
     release_status => 'stable',
     create_readme => 1,
     requires => {
+        'perl' => '5.10.0',
         'Term::ReadKey' => 0,
     },
     configure_requires => {
