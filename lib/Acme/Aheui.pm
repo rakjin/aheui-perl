@@ -1,5 +1,7 @@
 package Acme::Aheui;
 use utf8;
+use strict;
+use warnings;
 use Term::ReadKey;
 use Encode qw/encode/;
 
