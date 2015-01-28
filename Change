@@ -1,8 +1,12 @@
 Revision history for perl module Acme::Aheui
 
+0.03 2015-01-28
+
+ - If program read from stdin, continues until EOF, not an empty line
+
 0.02 2015-01-20
 
- - Return termination code
+ - Returns termination code
 
 0.01 2015-01-20
 
