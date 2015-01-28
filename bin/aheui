@@ -34,7 +34,7 @@ elsif (-t STDIN and -z STDIN) {
     while (1) {
         print '>>> ';
         my $line = <>;
-        last if $line =~ /^\r?\n$/;
+        last if !$line or $line =~ /^\r?\n$/;
         push @lines, $line;
     }
     $source = join '', @lines;
