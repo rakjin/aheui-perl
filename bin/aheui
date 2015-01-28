@@ -5,6 +5,8 @@ use warnings;
 use Encode qw/decode/;
 use Acme::Aheui;
 
+binmode STDIN, ':utf8';
+
 my ($filename) = @ARGV;
 
 my $help = << "__HELP__";
@@ -21,11 +23,11 @@ if ($filename) {
     open(FH, $filename) or die "cannot open $filename\n";
     $source = join '', <FH>;
     close(FH);
+    $source = decode('utf-8', $source);
 }
 else {
     $source = join '', <>;
 }
-$source = decode('utf-8', $source);
 
 my $interpreter = Acme::Aheui->new( source => $source );
 exit $interpreter->execute();
