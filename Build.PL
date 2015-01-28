@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-
 use Module::Build;
 
 Module::Build->new(
@@ -12,6 +11,7 @@ Module::Build->new(
     requires => {
         'perl' => '5.10.0',
         'Term::ReadKey' => 0,
+        'Term::Encoding' => 0,
     },
     configure_requires => {
         'Module::Build' => 0,

@@ -3,6 +3,7 @@ use utf8;
 use strict;
 use warnings;
 use Term::ReadKey;
+use Term::Encoding;
 use Encode qw/encode/;
 
 =encoding utf8
@@ -59,18 +60,18 @@ This method will create and return C<Acme::Aheui> object.
 sub new {
     my $class = shift;
     my %args = @_;
-    
     my $source = $args{source} || '';
-    my $codespace = build_codespace($source);
+    my $encoding = $args{output_encoding} || Term::Encoding::get_encoding();
 
     my $self = {
-        _codespace => $codespace,
+        _codespace => build_codespace($source),
         _stacks => [],
         _stack_index => 0,
         _x => 0,
         _y => 0,
         _dx => 0,
         _dy => 1,
+        _encoding => $encoding,
     };
     bless $self, $class;
 
@@ -394,7 +395,7 @@ sub _output_code_as_character {
     my ($self, $code) = @_;
 
     my $unichar = pack 'U', $code;
-    print encode('utf-8', $unichar);
+    print encode($self->{_encoding}, $unichar);
 }
 
 sub _get_input_character_as_code {
