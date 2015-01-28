@@ -1,13 +1,17 @@
 Revision history for perl module Acme::Aheui
 
-0.03 2015-01-28
+0.04 2015-01-28 13:27:43 Asia/Seoul
+
+ - (Fix) To properly read unicode characters from stdin
+
+0.03 2015-01-28 12:39:51 Asia/Seoul
 
  - If program read from stdin, continues until EOF, not an empty line
 
-0.02 2015-01-20
+0.02 2015-01-20 11:58:55 Asia/Seoul
 
  - Returns termination code
 
-0.01 2015-01-20
+0.01 2015-01-20 09:14:53 Asia/Seoul
 
  - Initial release
