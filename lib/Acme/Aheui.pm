@@ -22,17 +22,10 @@ our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
-Code:
-
     use utf8;
     use Acme::Aheui;
     my $interpreter = Acme::Aheui->new( source => '아희' );
     $interpreter->execute();
-
-CLI:
-
-    aheui filename  : program read from source file
-    aheui           : program read from stdin until an empty line
 
 =head1 DESCRIPTION
 
@@ -127,7 +120,7 @@ sub execute {
     my ($self) = @_;
 
     return 0 unless $self->_has_initial_command();
-    return $self->_step();
+    return $self->_loop_steps();
 }
 
 sub _has_initial_command {
@@ -142,7 +135,7 @@ sub _has_initial_command {
     return 0;
 }
 
-sub _step {
+sub _loop_steps {
     my ($self) = @_;
 
     while (1) {
