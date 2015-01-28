@@ -305,7 +305,10 @@ __SOURCE__
         my $stdin;
         open($stdin,'<&STDIN');
         *STDIN = *DATA;
-        my $interpreter = Acme::Aheui->new( source => '밯밯맣맣히' );
+        my $interpreter = Acme::Aheui->new(
+            source => '밯밯맣맣히',
+            output_encoding => 'utf-8',
+        );
         $interpreter->execute();
         *STDIN = $stdin;
     };
