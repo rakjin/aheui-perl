@@ -7,13 +7,14 @@ use Acme::Aheui;
 
 my ($filename) = @ARGV;
 
-my $usage = << '__USAGE__';
+my $help = << "__HELP__";
+Acme::Aheui $Acme::Aheui::VERSION
 Usage:
   aheui filename  : program read from source file
   aheui           : program read from stdin until EOF
-__USAGE__
+__HELP__
 
-die $usage if ($filename && $filename =~ /^--?h(elp)?$/);
+die $help if ($filename && $filename =~ /^--?h(elp)?$/);
 
 my $source;
 if ($filename) {
