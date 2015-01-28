@@ -8,4 +8,4 @@ an aheui interpreter written in perl
 [Acme::Aheui](http://search.cpan.org/dist/Acme-Aheui/lib/Acme/Aheui.pm)
 
     $ cpan Acme::Aheui
-    $ aheui
+    $ aheui <filename>
